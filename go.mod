@@ -7,7 +7,10 @@ require (
 	github.com/rivo/tview v0.0.0-20250330220935-949945f8d922 // direct
 )
 
-require github.com/pj-pj-pj/page-replacement-algorithms/assets v0.0.0-00010101000000-000000000000
+require (
+	github.com/pj-pj-pj/page-replacement-algorithms/assets v0.0.0-00010101000000-000000000000
+	github.com/pj-pj-pj/page-replacement-algorithms/ui v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/gdamore/encoding v1.0.0 // indirect
@@ -20,3 +23,5 @@ require (
 )
 
 replace github.com/pj-pj-pj/page-replacement-algorithms/assets => ./assets
+
+replace github.com/pj-pj-pj/page-replacement-algorithms/ui => ./ui

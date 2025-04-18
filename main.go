@@ -10,8 +10,10 @@ import (
 	"image/jpeg"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/pj-pj-pj/page-replacement-algorithms/assets"
 	"github.com/rivo/tview"
+
+	"github.com/pj-pj-pj/page-replacement-algorithms/assets"
+	"github.com/pj-pj-pj/page-replacement-algorithms/ui"
 )
 
 
