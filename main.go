@@ -100,16 +100,18 @@ func main() {
 
 	// --------------------------- algorithm panel starts here
 
-	algoPanel := newMainText("\nAlgorithm")
+	algo := newMainText("\nAlgorithm")
+	
 
 	// --------------------------- algorithm panel ends here
 
+
 	grid := tview.NewGrid().
 		SetRows(3, 0, 5).
-		SetColumns(40, 30, 0).SetBorders(true).
-		AddItem(newMainText("･✧･ﾟ*\t･ﾟ･･ﾟ✧\t･ﾟ*･ﾟ\n:･ﾟ✧･ﾟ* page-replacement-algorithms･✧･ﾟ*✧･ﾟ:･ﾟ\n✧･ﾟ✧･ﾟ✧･ﾟ:･ﾟ\t･ﾟ･ﾟ"), 0, 0, 1, 3, 0, 0, false). // stars for extravagance
-		AddItem(newMainText("\npaula-joyce-ucol\nbscs-3b\n--- please fullscreen for better experience ---"), 2, 1, 1, 2, 0, 0, false).
-		AddItem(newMainText("\nPress [Q] to exit\n\nPress [Ctrl + C] to force exit"), 2, 0, 1, 1, 0, 0, false)
+		SetColumns(40, 0, 0, 0).SetBorders(true).
+		AddItem(newMainText("･✧･ﾟ*\t･ﾟ･･ﾟ✧\t･ﾟ*･ﾟ\n:･ﾟ✧･ﾟ* page-replacement-algorithms･✧･ﾟ*✧･ﾟ:･ﾟ\n✧･ﾟ✧･ﾟ✧･ﾟ:･ﾟ\t･ﾟ･ﾟ"), 0, 0, 1, 4, 0, 0, false). // stars for extravagance
+		AddItem(newMainText("\npaula-joyce-ucol\nbscs-3b\n--- please fullscreen for better experience ---"), 2, 2, 1, 2, 0, 0, false).
+		AddItem(newMainText("\nPress [Q] to exit\n\nPress [Ctrl + C] to force exit"), 2, 0, 1, 2, 0, 0, false)
 
 	// func (g *Grid) AddItem(p Primitive, row, column, rowSpan, colSpan, minGridHeight, minGridWidth int, focus bool) *Grid 
 	// ----> for guide to know how to layout items
@@ -117,12 +119,12 @@ func main() {
 	// Layout for screens narrower than 150 cells.
 	grid.AddItem(image, 0, 0, 0, 0, 0, 0, false).
 		AddItem(menuGrid, 1, 0, 1, 1, 0, 0, false).
-		AddItem(algoPanel, 1, 1, 1, 2, 0, 0, false)
+		AddItem(algo, 1, 1, 1, 3, 0, 0, false)
 
 	// Layout for screens wider than 150 cells.
 	grid.AddItem(image, 1, 0, 1, 1, 0, 150, false).
 		AddItem(menuGrid, 1, 1, 1, 1, 0, 150, false).
-		AddItem(algoPanel, 1, 2, 1, 1, 0, 150, false)
+		AddItem(algo, 1, 2, 1, 2, 0, 150, false)
 
 
 	if err := app.SetRoot(grid, true).SetFocus(selections[0]).EnableMouse(true).Run(); err != nil {
