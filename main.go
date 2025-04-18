@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"math/rand"
+
 	"bytes"
 	"encoding/base64"
 
@@ -11,6 +14,16 @@ import (
 	"github.com/rivo/tview"
 )
 
+
+func generateRange(length int) []int {
+	result := make([]int, length)
+
+	for i := 0; i < length; i++ {
+		result[i] = rand.Intn(10)
+	}
+
+	return result
+}
 
 func main() {
 	// used to initialize tview, 
@@ -34,11 +47,23 @@ func main() {
 			SetText(text).SetTextColor(primaryColor) // green
 	}
 
-	newText := func(text string) tview.Primitive {
+	newText := func(text string) *tview.TextView {
 		return tview.NewTextView().SetText(text).
-		SetTextColor(tcell.ColorRed)
+		SetTextColor(tcell.Color153)
 	}
 
+	// ----- algo values that menu needs to access so i need to initialize them here at the top
+
+	selectedAlgo := "First-In, First-Out (FIFO)"
+	selectedAlgoDisplay := newText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+
+	selectedFrames := 3
+	selectedFramesDisplay := newText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+
+	selectedRange := "0 - 9"
+	selectedRangeDisplay := newText("\tPage Reference String: \t" + selectedRange)
+
+	// ----- algo values end here
 
 	// --------------------------- menu grid and lists (starts here)
 	// TODO: Create a module for menu later to reduce clutter on main.go
@@ -48,24 +73,69 @@ func main() {
 	// this will appear on menu and users can select which page-replacement-algo to use
 	algoType := tview.NewList().
 		ShowSecondaryText(false).
-		AddItem("First-In, First-Out (FIFO)", "", 0, func() { image.SetColors(2) }).
-		AddItem("Least Recently Used (LRU)", "", 0, func() { image.SetColors(8) }).
-		AddItem("Optimal Algorithm", "", 0, func() { image.SetColors(tview.TrueColor) })
+		AddItem("First-In, First-Out (FIFO)", "", 0, func() { 
+			image.SetColors(2)
+
+			selectedAlgo = "First-In, First-Out (FIFO)"
+			selectedAlgoDisplay.SetText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+	  }).
+		AddItem("Least Recently Used (LRU)", "", 0, func() { 
+			image.SetColors(8) 
+
+			selectedAlgo = "Least Recently Used (LRU)"
+			selectedAlgoDisplay.SetText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+		}).
+		AddItem("Optimal Algorithm (OPT)", "", 0, func() { 
+			image.SetColors(tview.TrueColor) 
+
+			selectedAlgo = "Optimal Algorithm (OPT)"
+			selectedAlgoDisplay.SetText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+		})
 		// AddItem("256 colors", "", 0, func() { image.SetColors(256) })
 	algoType.SetTitle(" Algorithms ").SetBorder(true)
 
 	frames := tview.NewList().
 		ShowSecondaryText(false).
-		AddItem("3 (Default)", "", 0, func() { }).
-		AddItem("9", "", 0, func() { }).
-		AddItem("15", "", 0, func() { })
+		AddItem("3 (Default)", "", 0, func() {
+			image.SetColors(1)
+			
+			selectedFrames = 3
+			selectedFramesDisplay.SetText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+		}).
+		AddItem("9", "", 0, func() {
+			image.SetColors(4)
+			
+			selectedFrames = 9
+			selectedFramesDisplay.SetText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+		}).
+		AddItem("15", "", 0, func() {
+			image.SetColors(3)
+			
+			selectedFrames = 15
+			selectedFramesDisplay.SetText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+		})
 	frames.SetTitle(" Number of Frames ").SetBorder(true)
 
 	pageRefString := tview.NewList().
 		ShowSecondaryText(false).
-		AddItem("0 - 9 (Default)", "", 0, func() { }).
-		AddItem("0 - 16", "", 0, func() { }).
-		AddItem("0 - 21", "", 0, func() { })
+		AddItem("0 - 9 (Default)", "", 0, func() {
+			image.SetColors(8)
+			
+			selectedRange = "0 - 9 (Default)"
+			selectedRangeDisplay.SetText("\tPage Reference String: \t" + selectedRange)
+		}).
+		AddItem("0 - 16", "", 0, func() {
+			image.SetColors(7)
+			
+			selectedRange = "0 - 16"
+			selectedRangeDisplay.SetText("\tPage Reference String: \t" + selectedRange)
+		}).
+		AddItem("0 - 21", "", 0, func() {
+			image.SetColors(122)
+			
+			selectedRange = "0 - 21"
+			selectedRangeDisplay.SetText("\tPage Reference String: \t" + selectedRange)
+		})
 	pageRefString.SetTitle(" Page Reference String Range ").SetBorder(true)
 
 	menuGrid := tview.NewGrid().
@@ -100,8 +170,17 @@ func main() {
 
 	// --------------------------- algorithm panel starts here
 
-	algo := newMainText("\nAlgorithm")
-	
+	algo := newMainText("\nAlgorithm\n")
+
+	algoGrid := tview.NewGrid().
+		SetBorders(false).
+		SetRows(3, 1, 1, 1, 1, 1, 1).
+		AddItem(algo, 0, 0, 1, 1, 0, 0, true).
+		AddItem(selectedAlgoDisplay, 1, 0, 1, 1, 0, 0, true).
+		AddItem(newMainText(""), 2, 0, 1, 1, 0, 0, true).
+		AddItem(selectedFramesDisplay, 3, 0, 1, 1, 0, 0, true).
+		AddItem(newMainText(""), 4, 0, 1, 1, 0, 0, true).
+		AddItem(selectedRangeDisplay, 5, 0, 1, 1, 0, 0, true)
 
 	// --------------------------- algorithm panel ends here
 
@@ -109,7 +188,7 @@ func main() {
 	grid := tview.NewGrid().
 		SetRows(3, 0, 5).
 		SetColumns(40, 0, 0, 0).SetBorders(true).
-		AddItem(newMainText("･✧･ﾟ*\t･ﾟ･･ﾟ✧\t･ﾟ*･ﾟ\n:･ﾟ✧･ﾟ* page-replacement-algorithms･✧･ﾟ*✧･ﾟ:･ﾟ\n✧･ﾟ✧･ﾟ✧･ﾟ:･ﾟ\t･ﾟ･ﾟ"), 0, 0, 1, 4, 0, 0, false). // stars for extravagance
+		AddItem(newText("･*\t･ﾟ･･ﾟ\t･ﾟ*･ﾟ:･ﾟ･ﾟ✧ ･ﾟ✧･ﾟ*･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ*･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧   ･ﾟ*･ﾟ*･ﾟ･ﾟ\n:･ﾟ✧ ･･･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧ ✧\t･ﾟ*･ﾟ  :･ﾟ✧･ﾟ*･ﾟ･ﾟ*･ﾟ･ﾟ*･ﾟ*･ﾟpage-replacement-algorithms･✧✧\t･ﾟ*･ﾟ  :･ﾟ✧･ﾟ*･ﾟ*･ﾟ\n･ﾟ✧\t･ﾟ･ﾟ*✧･ﾟ:･ﾟ✧✧\t･ﾟ*･ﾟ  :･ﾟ✧   ･ﾟ*･ﾟ*･ﾟ･ﾟ✧\t･ﾟ*･ﾟ:✧･ﾟ✧･ﾟ✧･ﾟ:･ﾟ\t･ﾟ･ﾟ"), 0, 0, 1, 4, 0, 0, false). // stars for extravagance
 		AddItem(newMainText("\npaula-joyce-ucol\nbscs-3b\n--- please fullscreen for better experience ---"), 2, 2, 1, 2, 0, 0, false).
 		AddItem(newMainText("\nPress [Q] to exit\n\nPress [Ctrl + C] to force exit"), 2, 0, 1, 2, 0, 0, false)
 
@@ -119,12 +198,12 @@ func main() {
 	// Layout for screens narrower than 150 cells.
 	grid.AddItem(image, 0, 0, 0, 0, 0, 0, false).
 		AddItem(menuGrid, 1, 0, 1, 1, 0, 0, false).
-		AddItem(algo, 1, 1, 1, 3, 0, 0, false)
+		AddItem(algoGrid, 1, 1, 1, 3, 0, 0, false)
 
 	// Layout for screens wider than 150 cells.
 	grid.AddItem(image, 1, 0, 1, 1, 0, 150, false).
 		AddItem(menuGrid, 1, 1, 1, 1, 0, 150, false).
-		AddItem(algo, 1, 2, 1, 2, 0, 150, false)
+		AddItem(algoGrid, 1, 2, 1, 2, 0, 150, false)
 
 
 	if err := app.SetRoot(grid, true).SetFocus(selections[0]).EnableMouse(true).Run(); err != nil {
