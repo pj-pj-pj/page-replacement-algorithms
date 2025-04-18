@@ -115,6 +115,18 @@ func main() {
 			
 			selectedFrames = 15
 			selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+		}).
+		AddItem("18", "", 0, func() {
+			image.SetColors(3)
+			
+			selectedFrames = 18
+			selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+		}).
+		AddItem("25", "", 0, func() {
+			image.SetColors(3)
+			
+			selectedFrames = 25
+			selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
 		})
 	frames.SetTitle(" Number of Frames ").SetBorder(true)
 
