@@ -19,7 +19,7 @@ func generateRange(length int) []int {
 	result := make([]int, length)
 
 	for i := 0; i < length; i++ {
-		result[i] = rand.Intn(10)
+		result[i] = rand.Intn(length) // this thing returns integers from 0 to 9 (inclusive)
 	}
 
 	return result
@@ -44,24 +44,26 @@ func main() {
 	newMainText := func(text string) tview.Primitive {
 		return tview.NewTextView().
 			SetTextAlign(tview.AlignCenter).
-			SetText(text).SetTextColor(primaryColor) // green
+			SetText(text).SetTextColor(tcell.Color153) // blue
 	}
 
 	newText := func(text string) *tview.TextView {
 		return tview.NewTextView().SetText(text).
-		SetTextColor(tcell.Color153)
+		SetTextColor(primaryColor)
 	}
 
 	// ----- algo values that menu needs to access so i need to initialize them here at the top
 
 	selectedAlgo := "First-In, First-Out (FIFO)"
-	selectedAlgoDisplay := newText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+	selectedAlgoDisplay := newText("Algorithm: \t\t\t" + selectedAlgo)
 
 	selectedFrames := 3
-	selectedFramesDisplay := newText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+	selectedFramesDisplay := newText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
 
-	selectedRange := "0 - 9"
-	selectedRangeDisplay := newText("\tPage Reference String: \t" + selectedRange)
+	selectedRange := 9
+	selectedRangeDisplay := newText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+	generatedPageReferenceString := newText(fmt.Sprint("Generated String: \t", generateRange(9)))
 
 	// ----- algo values end here
 
@@ -77,19 +79,19 @@ func main() {
 			image.SetColors(2)
 
 			selectedAlgo = "First-In, First-Out (FIFO)"
-			selectedAlgoDisplay.SetText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+			selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
 	  }).
 		AddItem("Least Recently Used (LRU)", "", 0, func() { 
 			image.SetColors(8) 
 
 			selectedAlgo = "Least Recently Used (LRU)"
-			selectedAlgoDisplay.SetText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+			selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
 		}).
 		AddItem("Optimal Algorithm (OPT)", "", 0, func() { 
 			image.SetColors(tview.TrueColor) 
 
 			selectedAlgo = "Optimal Algorithm (OPT)"
-			selectedAlgoDisplay.SetText("\tAlgorithm: \t\t\t\t" + selectedAlgo)
+			selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
 		})
 		// AddItem("256 colors", "", 0, func() { image.SetColors(256) })
 	algoType.SetTitle(" Algorithms ").SetBorder(true)
@@ -100,19 +102,19 @@ func main() {
 			image.SetColors(1)
 			
 			selectedFrames = 3
-			selectedFramesDisplay.SetText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+			selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
 		}).
 		AddItem("9", "", 0, func() {
 			image.SetColors(4)
 			
 			selectedFrames = 9
-			selectedFramesDisplay.SetText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+			selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
 		}).
 		AddItem("15", "", 0, func() {
 			image.SetColors(3)
 			
 			selectedFrames = 15
-			selectedFramesDisplay.SetText(fmt.Sprintf("\tFrames: \t\t\t\t%d", selectedFrames))
+			selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
 		})
 	frames.SetTitle(" Number of Frames ").SetBorder(true)
 
@@ -121,33 +123,40 @@ func main() {
 		AddItem("0 - 9 (Default)", "", 0, func() {
 			image.SetColors(8)
 			
-			selectedRange = "0 - 9 (Default)"
-			selectedRangeDisplay.SetText("\tPage Reference String: \t" + selectedRange)
+			selectedRange = 9
+			selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+			generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", generateRange(9)))
 		}).
 		AddItem("0 - 16", "", 0, func() {
 			image.SetColors(7)
 			
-			selectedRange = "0 - 16"
-			selectedRangeDisplay.SetText("\tPage Reference String: \t" + selectedRange)
+			selectedRange = 16
+			selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+			generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", generateRange(16)))
 		}).
 		AddItem("0 - 21", "", 0, func() {
 			image.SetColors(122)
 			
-			selectedRange = "0 - 21"
-			selectedRangeDisplay.SetText("\tPage Reference String: \t" + selectedRange)
+			selectedRange = 21
+			selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+			generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", generateRange(21)))
 		})
-	pageRefString.SetTitle(" Page Reference String Range ").SetBorder(true)
+	pageRefString.SetTitle(" Page Reference String (PRS) Range ").SetBorder(true)
 
 	menuGrid := tview.NewGrid().
 		SetBorders(false).
-		SetRows(3, 0, 1, 0, 1, 0, 5).
-		AddItem(menu, 0, 0, 1, 1, 0, 0, true).
-		AddItem(algoType, 1, 0, 1, 1, 0, 0, true).
-		AddItem(newMainText(""), 2, 0, 1, 1, 0, 0, true).
-		AddItem(frames, 3, 0, 1, 1, 0, 0, true).
-		AddItem(newMainText(""), 4, 0, 1, 1, 0, 0, true).
-		AddItem(pageRefString, 5, 0, 1, 1, 0, 0, true).
-		AddItem(newText("\n[!] Navigation: [Tab] to switch lists,\n\tarrow keys [↑, ↓] to change option,\n\t[Enter] key to select option\n"), 6, 0, 1, 1, 0, 0, true)
+		SetColumns(2, 0, 2).
+		SetRows(3, 0, 1, 0, 1, 0, 6).
+		AddItem(menu, 0, 1, 1, 1, 0, 0, true).
+		AddItem(algoType, 1, 1, 1, 1, 0, 0, true).
+		AddItem(newMainText(""), 2, 1, 1, 1, 0, 0, true).
+		AddItem(frames, 3, 1, 1, 1, 0, 0, true).
+		AddItem(newMainText(""), 4, 1, 1, 1, 0, 0, true).
+		AddItem(pageRefString, 5, 1, 1, 1, 0, 0, true).
+		AddItem(newText("\n[!] Navigation:\n\tArrow keys [↑, ↓] to change option,\n\t[Tab] to switch lists,\n\t[Enter] key to select option\n"), 6, 0, 1, 3, 0, 0, true)
 
 	selections := []*tview.Box{algoType.Box, frames.Box, pageRefString.Box}
 	for i, box := range selections {
@@ -162,7 +171,9 @@ func main() {
 					return nil
 				}
 				return event
-			})
+			}).
+			SetBorderColor(tcell.Color153)
+			// SetBackgroundColor(tcell.Color153)
 		})(i)
 	}
 
@@ -174,13 +185,14 @@ func main() {
 
 	algoGrid := tview.NewGrid().
 		SetBorders(false).
-		SetRows(3, 1, 1, 1, 1, 1, 1).
-		AddItem(algo, 0, 0, 1, 1, 0, 0, true).
-		AddItem(selectedAlgoDisplay, 1, 0, 1, 1, 0, 0, true).
-		AddItem(newMainText(""), 2, 0, 1, 1, 0, 0, true).
-		AddItem(selectedFramesDisplay, 3, 0, 1, 1, 0, 0, true).
-		AddItem(newMainText(""), 4, 0, 1, 1, 0, 0, true).
-		AddItem(selectedRangeDisplay, 5, 0, 1, 1, 0, 0, true)
+		SetColumns(3, 0, 3).
+		SetRows(3, 1, 1, 1, 1, 1).
+		AddItem(algo, 0, 1, 1, 1, 0, 0, true).
+		AddItem(selectedAlgoDisplay, 1, 1, 1, 1, 0, 0, true).
+		AddItem(newMainText(""), 2, 1, 1, 1, 0, 0, true).
+		AddItem(selectedFramesDisplay, 3, 1, 1, 1, 0, 0, true).
+		AddItem(selectedRangeDisplay, 4, 1, 1, 1, 0, 0, true).
+		AddItem(generatedPageReferenceString, 5, 1, 1, 1, 0, 0, true)
 
 	// --------------------------- algorithm panel ends here
 
