@@ -1,6 +1,8 @@
 package main
 
 import (
+	// these two packages provide stuff to create 
+	// rich interactive terminal program for go lang woooo
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 

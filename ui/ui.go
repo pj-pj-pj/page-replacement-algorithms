@@ -15,6 +15,8 @@ import (
 	"github.com/pj-pj-pj/page-replacement-algorithms/assets"
 )
 
+// generates prs based on the length given
+// it says length but that is also range
 func generatePageRefString(length int) []int {
 	result := make([]int, length) // make is like array but it has dynamic size
 
@@ -25,8 +27,16 @@ func generatePageRefString(length int) []int {
 	return result
 }
 
+
+
 // green for hackerist vibes
 var primaryColor = tcell.ColorForestGreen
+
+var Image = tview.NewImage().SetImage(photo) // insert Image for hacker vibes
+var b, _ = base64.StdEncoding.DecodeString(assets.Hackerist) 
+var photo, _ = jpeg.Decode(bytes.NewReader(b))
+
+
 
 // this is to make creating texts easier, just use newMainText("blablabla")
 // instead of writing very long stuff
@@ -42,9 +52,8 @@ var NewText = func(text string) *tview.TextView {
 	SetTextColor(primaryColor)
 }
 
-var Image = tview.NewImage().SetImage(photo) // insert Image for hacker vibes
-var b, _ = base64.StdEncoding.DecodeString(assets.Hackerist) 
-var photo, _ = jpeg.Decode(bytes.NewReader(b))
+
+
 
 // ----- algo values that menu needs to access so i need to initialize them here at the top
 
@@ -62,8 +71,10 @@ var generatedPageReferenceString = NewText(fmt.Sprint("Generated String: \t", pr
 
 // ----- algo values end here
 
-// --------------------------- menu grid and lists (starts here)
 
+// --------------------------- menu grid and lists ui stuff (starts here)
+
+// this is title text
 var menu = NewMainText("\nMenu")
 
 // this will appear on menu and users can select which page-replacement-algo to use
@@ -87,8 +98,8 @@ var algoType = tview.NewList().
 		selectedAlgo = "Optimal Algorithm (OPT)"
 		selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
 	})
-	// AddItem("256 colors", "", 0, func() { Image.SetColors(256) })
 
+// options of number of frames for users to choose from
 var frames = tview.NewList().
 	ShowSecondaryText(false).
 	AddItem("3 (Default)", "", 0, func() {
@@ -122,6 +133,7 @@ var frames = tview.NewList().
 		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
 	})
 
+	// options of prs ranges for users to choose from
 var pageRefString *tview.List = tview.NewList().
 	ShowSecondaryText(false).
 	AddItem("0 - 9 (Default)", "", 0, func() {
@@ -152,15 +164,21 @@ var pageRefString *tview.List = tview.NewList().
 		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
 	})
 
+// set up list's title and borders
+// somehow i cant do it when i initialize them so here it is
 func SetUpLists() {
 	frames.SetTitle(" Number of Frames ").SetBorder(true)
 	pageRefString.SetTitle(" Page Reference String (PRS) Range ").SetBorder(true)
 	algoType.SetTitle(" Algorithms ").SetBorder(true)
 }
 
+// we put lists on an array of type boxes
+// this is just to put in a for loop that can be seen on main
+// the loop puts keyboard navigation on the list
+// i just put it here to lessen more code on main as much as possible
 var Selections = []*tview.Box{algoType.Box, frames.Box, pageRefString.Box}
 
-
+// grid that holds the lists of options together
 var MenuGrid = tview.NewGrid().
 	SetBorders(false).
 	SetColumns(2, 0, 2).
