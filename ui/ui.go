@@ -1,1 +1,196 @@
 package ui
+
+import (
+	"fmt"
+
+	"Image/jpeg"
+	"bytes"
+	"encoding/base64"
+
+	"math/rand"
+
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+
+	"github.com/pj-pj-pj/page-replacement-algorithms/assets"
+)
+
+func generatePageRefString(length int) []int {
+	result := make([]int, length) // make is like array but it has dynamic size
+
+	for i := 0; i < length; i++ {
+		result[i] = rand.Intn(length) // this thing returns integers from 0 to 9 (inclusive)
+	}
+
+	return result
+}
+
+// green for hackerist vibes
+var primaryColor = tcell.ColorForestGreen
+
+// this is to make creating texts easier, just use newMainText("blablabla")
+// instead of writing very long stuff
+// i might create non-centered text later so this is named "main" text
+var NewMainText = func(text string) tview.Primitive {
+	return tview.NewTextView().
+		SetTextAlign(tview.AlignCenter).
+		SetText(text).SetTextColor(tcell.Color153) // blue
+}
+
+var NewText = func(text string) *tview.TextView {
+	return tview.NewTextView().SetText(text).
+	SetTextColor(primaryColor)
+}
+
+var Image = tview.NewImage().SetImage(photo) // insert Image for hacker vibes
+var b, _ = base64.StdEncoding.DecodeString(assets.Hackerist) 
+var photo, _ = jpeg.Decode(bytes.NewReader(b))
+
+// ----- algo values that menu needs to access so i need to initialize them here at the top
+
+var selectedAlgo = "First-In, First-Out (FIFO)"
+var selectedAlgoDisplay = NewText("Algorithm: \t\t\t" + selectedAlgo)
+
+var selectedFrames = 3
+var selectedFramesDisplay = NewText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+
+var selectedRange = 9
+var selectedRangeDisplay = NewText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+var prs = generatePageRefString(9)
+var generatedPageReferenceString = NewText(fmt.Sprint("Generated String: \t", prs))
+
+// ----- algo values end here
+
+// --------------------------- menu grid and lists (starts here)
+
+var menu = NewMainText("\nMenu")
+
+// this will appear on menu and users can select which page-replacement-algo to use
+var algoType = tview.NewList().
+	ShowSecondaryText(false).
+	AddItem("First-In, First-Out (FIFO)", "", 0, func() { 
+		Image.SetColors(2)
+
+		selectedAlgo = "First-In, First-Out (FIFO)"
+		selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
+	}).
+	AddItem("Least Recently Used (LRU)", "", 0, func() { 
+		Image.SetColors(8) 
+
+		selectedAlgo = "Least Recently Used (LRU)"
+		selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
+	}).
+	AddItem("Optimal Algorithm (OPT)", "", 0, func() { 
+		Image.SetColors(tview.TrueColor) 
+
+		selectedAlgo = "Optimal Algorithm (OPT)"
+		selectedAlgoDisplay.SetText("Algorithm: \t\t\t" + selectedAlgo)
+	})
+	// AddItem("256 colors", "", 0, func() { Image.SetColors(256) })
+
+var frames = tview.NewList().
+	ShowSecondaryText(false).
+	AddItem("3 (Default)", "", 0, func() {
+		Image.SetColors(1)
+		
+		selectedFrames = 3
+		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+	}).
+	AddItem("9", "", 0, func() {
+		Image.SetColors(10)
+		
+		selectedFrames = 9
+		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+	}).
+	AddItem("15", "", 0, func() {
+		Image.SetColors(4)
+		
+		selectedFrames = 15
+		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+	}).
+	AddItem("18", "", 0, func() {
+		Image.SetColors(1)
+		
+		selectedFrames = 18
+		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+	}).
+	AddItem("25", "", 0, func() {
+		Image.SetColors(78)
+		
+		selectedFrames = 25
+		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t\t\t%d", selectedFrames))
+	})
+
+var pageRefString *tview.List = tview.NewList().
+	ShowSecondaryText(false).
+	AddItem("0 - 9 (Default)", "", 0, func() {
+		Image.SetColors(0)
+		
+		selectedRange = 9
+		selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+		prs = generatePageRefString(9)
+		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
+	}).
+	AddItem("0 - 16", "", 0, func() {
+		Image.SetColors(9)
+		
+		selectedRange = 16
+		selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+		prs = generatePageRefString(16)
+		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
+	}).
+	AddItem("0 - 21", "", 0, func() {
+		Image.SetColors(1)
+		
+		selectedRange = 21
+		selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t\t\t0 - %d", selectedRange))
+
+		prs = generatePageRefString(21)
+		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
+	})
+
+func SetUpLists() {
+	frames.SetTitle(" Number of Frames ").SetBorder(true)
+	pageRefString.SetTitle(" Page Reference String (PRS) Range ").SetBorder(true)
+	algoType.SetTitle(" Algorithms ").SetBorder(true)
+}
+
+var Selections = []*tview.Box{algoType.Box, frames.Box, pageRefString.Box}
+
+
+var MenuGrid = tview.NewGrid().
+	SetBorders(false).
+	SetColumns(2, 0, 2).
+	SetRows(3, 0, 1, 0, 1, 0, 6).
+	AddItem(menu, 0, 1, 1, 1, 0, 0, true).
+	AddItem(algoType, 1, 1, 1, 1, 0, 0, true).
+	AddItem(NewMainText(""), 2, 1, 1, 1, 0, 0, true).
+	AddItem(frames, 3, 1, 1, 1, 0, 0, true).
+	AddItem(NewMainText(""), 4, 1, 1, 1, 0, 0, true).
+	AddItem(pageRefString, 5, 1, 1, 1, 0, 0, true).
+	AddItem(NewText("\n[!] Navigation:\n\tArrow keys [↑, ↓] to change option,\n\t[Tab] to switch lists,\n\t[Enter] key to select option\n"), 6, 0, 1, 3, 0, 0, true)
+
+// --------------------------- menu grid and lists (ends here)
+
+
+
+
+// --------------------------- algorithm panel starts here
+
+var algo = NewMainText("\nAlgorithm\n")
+
+var AlgoGrid = tview.NewGrid().
+	SetBorders(false).
+	SetColumns(3, 0, 3).
+	SetRows(3, 1, 1, 1, 1, 1).
+	AddItem(algo, 0, 1, 1, 1, 0, 0, true).
+	AddItem(selectedAlgoDisplay, 1, 1, 1, 1, 0, 0, true).
+	AddItem(NewMainText(""), 2, 1, 1, 1, 0, 0, true).
+	AddItem(selectedFramesDisplay, 3, 1, 1, 1, 0, 0, true).
+	AddItem(selectedRangeDisplay, 4, 1, 1, 1, 0, 0, true).
+	AddItem(generatedPageReferenceString, 5, 1, 1, 1, 0, 0, true)
+
+// --------------------------- algorithm panel ends here
