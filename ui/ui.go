@@ -33,7 +33,8 @@ func generatePageRefString(length int) []int {
 // green for hackerist vibes
 var primaryColor = tcell.ColorLimeGreen
 
-var Image = tview.NewImage().SetImage(photo) // insert Image for hacker vibes
+// insert Image for hacker vibes
+var Image = tview.NewImage().SetImage(photo) 
 var b, _ = base64.StdEncoding.DecodeString(assets.Hackerist) 
 var photo, _ = jpeg.Decode(bytes.NewReader(b))
 
@@ -81,97 +82,24 @@ var menu = NewMainText("\nMenu")
 // this will appear on menu and users can select which page-replacement-algo to use
 var algoType = tview.NewList().
 	ShowSecondaryText(false).
-	AddItem("First-In, First-Out (FIFO)", "", 0, func() { 
-		Image.SetColors(2)
-
-		selectedAlgo = "First-In, First-Out (FIFO)"
-		selectedAlgoDisplay.SetText("Algorithm: \t" + selectedAlgo)
-	}).
-	AddItem("Least Recently Used (LRU)", "", 0, func() { 
-		Image.SetColors(8) 
-
-		selectedAlgo = "Least Recently Used (LRU)"
-		selectedAlgoDisplay.SetText("Algorithm: \t" + selectedAlgo)
-	}).
-	AddItem("Optimal Algorithm (OPT)", "", 0, func() { 
-		Image.SetColors(tview.TrueColor) 
-
-		selectedAlgo = "Optimal Algorithm (OPT)"
-		selectedAlgoDisplay.SetText("Algorithm: \t" + selectedAlgo)
-	})
+	AddItem("First-In, First-Out (FIFO)", "", 0, func() { redrawAlgoType(2, "First-In, First-Out (FIFO)") }).
+	AddItem("Least Recently Used (LRU)", "", 0, func() { redrawAlgoType(8, "Least Recently Used (LRU)") }).
+	AddItem("Optimal Algorithm (OPT)", "", 0, func() { redrawAlgoType(256, "Optimal Algorithm (OPT)") })
 
 // options of number of frames for users to choose from
 var frames = tview.NewList().
 	ShowSecondaryText(false).
-	AddItem("3 (Default)", "", 0, func() {
-		Image.SetColors(1)
-		
-		selectedFrames = 3
-		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	}).
-	AddItem("9", "", 0, func() {
-		Image.SetColors(10)
-		
-		selectedFrames = 9
-		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	}).
-	AddItem("15", "", 0, func() {
-		Image.SetColors(4)
-		
-		selectedFrames = 15
-		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	}).
-	AddItem("18", "", 0, func() {
-		Image.SetColors(1)
-		
-		selectedFrames = 18
-		selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	})
+	AddItem("3 (Default)", "", 0, func() { redrawFrames(4, 3) }).
+	AddItem("9", "", 0, func() { redrawFrames(0, 9) }).
+	AddItem("15", "", 0, func() { redrawFrames(256, 15) }).
+	AddItem("18", "", 0, func() {  redrawFrames(1, 18) })
 
 	// options of prs ranges for users to choose from
 var pageRefString *tview.List = tview.NewList().
 	ShowSecondaryText(false).
-	AddItem("0 - 9 (Default)", "", 0, func() {
-		Image.SetColors(0)
-		
-		selectedRange = 9
-		selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t0 - %d", selectedRange))
-
-		prs = generatePageRefString(selectedRange)
-		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	}).
-	AddItem("0 - 16", "", 0, func() {
-		Image.SetColors(9)
-		
-		selectedRange = 16
-		selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t0 - %d", selectedRange))
-
-		prs = generatePageRefString(selectedRange)
-		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	}).
-	AddItem("0 - 20", "", 0, func() {
-		Image.SetColors(1)
-		
-		selectedRange = 20
-		selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t0 - %d", selectedRange))
-
-		prs = generatePageRefString(selectedRange)
-		generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
-
-		algotable.PopulateTable(selectedRange, prs, selectedFrames)
-	})
+	AddItem("0 - 9 (Default)", "", 0, func() { redrawPRS(0, 9) }).
+	AddItem("0 - 16", "", 0, func() {  redrawPRS(9, 16) }).
+	AddItem("0 - 20", "", 0, func() {  redrawPRS(1, 20) })
 
 // set up list's title and borders
 // somehow i cant do it when i initialize them so here it is
@@ -180,8 +108,40 @@ func SetUpLists() {
 	pageRefString.SetTitle(" Page Reference String (PRS) Range ").SetBorder(true)
 	algoType.SetTitle(" Algorithms ").SetBorder(true)
 
+	// out of place buut it needs to be setup along with the lists
+	// this sets up the table
 	algotable.PopulateTable(9, prs, selectedFrames)
+}
 
+// these functions update ui
+// i put here the repetitive functions that is used
+// whenever a selection is made from the list because they are now very long and just repetitive
+func redrawAlgoType(imgNumber int, algo string) {
+	Image.SetColors(imgNumber)
+
+	selectedAlgo = algo
+	selectedAlgoDisplay.SetText("Algorithm: \t" + selectedAlgo)
+}
+
+func redrawFrames(imgNumber int, frames int) {
+	Image.SetColors(imgNumber)
+		
+	selectedFrames = frames
+	selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
+
+	algotable.PopulateTable(selectedRange, prs, selectedFrames)
+}
+
+func redrawPRS(imgNumber int, prsRange int) {
+	Image.SetColors(imgNumber)
+		
+	selectedRange = prsRange
+	selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t0 - %d", selectedRange))
+
+	prs = generatePageRefString(selectedRange)
+	generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
+
+	algotable.PopulateTable(selectedRange, prs, selectedFrames)
 }
 
 // we put lists on an array of type boxes
