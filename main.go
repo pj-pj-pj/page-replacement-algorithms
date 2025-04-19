@@ -1,7 +1,7 @@
 package main
 
 import (
-	// these two packages provide stuff to create 
+	// these two packages provide stuff to create
 	// rich interactive terminal program for go lang woooo
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -10,6 +10,7 @@ import (
 	// i put them in a module to reduce clutter here
 	// but this module contains the function for generating the page reference string
 	"github.com/pj-pj-pj/page-replacement-algorithms/ui"
+	"github.com/pj-pj-pj/page-replacement-algorithms/ui/algotable"
 )
 
 func main() {
@@ -17,13 +18,20 @@ func main() {
 	// tview is a library for creating rich interactive terminal programs which is what im trying to create here
 	app := tview.NewApplication()
 
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if  event.Rune() == 'f' {
+			app.SetRoot(algotable.Table, true)
+		}
+		return event
+	})
+
 	// this is the main grid of the program
 	grid := tview.NewGrid().
-		SetRows(3, 0, 5).
+		SetRows(3, 0, 2).
 		SetColumns(40, 0, 0, 0).SetBorders(true).
 		AddItem(ui.NewText("･*\t･ﾟ･･ﾟ\t･ﾟ*･ﾟ:･ﾟ･ﾟ･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ*･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧･ﾟ*･ﾟ･ﾟ\n:･ﾟ✧ ･･･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧ ✧\t･ﾟ*･ﾟ  :･ﾟ✧･ﾟ･ﾟ*･ﾟ*･ﾟpage･ﾟ*✧replacement･ﾟ･ﾟalgorithms･ﾟ*✧･ﾟ:･ﾟ\n･✧\t･ﾟ･ﾟ*✧･ﾟ:\t･✧\t･ﾟ*･ﾟ:✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ･ﾟ･ﾟ✧\t･ﾟ*\t･ﾟ*･ﾟ:･ﾟ･ﾟ:･ﾟ✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ･ﾟ:･ﾟ\t･ﾟ･ﾟ"), 0, 0, 1, 4, 0, 0, false). // stars for extravagance
-		AddItem(ui.NewMainText("\npaula-joyce-ucol\nbscs-3b\n--- please fullscreen for better experience ---"), 2, 2, 1, 2, 0, 0, false).
-		AddItem(ui.NewMainText("\nPress [Q] to exit\n\nPress [Ctrl + C] to force exit"), 2, 0, 1, 2, 0, 0, false)
+		AddItem(ui.NewMainText("paula-joyce-ucol\nbscs-3b"), 2, 2, 1, 2, 0, 0, false).
+		AddItem(ui.NewMainText("--- please fullscreen for better experience ---\nand press [Ctrl + C] to exit"), 2, 0, 1, 2, 0, 0, false)
 
 	// func (g *Grid) AddItem(p Primitive, row, column, rowSpan, colSpan, minGridHeight, minGridWidth int, focus bool) *Grid 
 	// ----> for guide to know how to layout items
