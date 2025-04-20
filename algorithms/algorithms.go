@@ -1,6 +1,6 @@
 package algorithms
 
-type pageStep struct {
+type PageStep struct {
 	Step        int
 	Page        int
 	Frames      []int
@@ -8,12 +8,12 @@ type pageStep struct {
 	FaultsCount int
 }
 
-func Fifo(prs []int, framesLength int) []pageStep {
+func Fifo(prs []int, framesLength int) []PageStep {
 	// result stores the whole process
-	// frames represent the memory, this changes every step and stored in the result per pageStep
+	// frames represent the memory, this changes every step and stored in the result per PageStep
 	// queue is for tracking the  "firstin" page, its elements shift left to replace the first element with the next one
 	// pageSet is like a dictionary, it stores if the int exists like this: {5: true, 4: true}, it returns bool
-	var result []pageStep
+	var result []PageStep
 	var frames []int
 	var queue []int
 	pageSet := map[int]bool{}
@@ -34,7 +34,7 @@ func Fifo(prs []int, framesLength int) []pageStep {
 	// 		if not full:
 	// we simple append the new page on frames and queue and we set pageSet[page] to true
 	for i, page := range prs {
-		currStep := pageStep{
+		currStep := PageStep{
 			Step:        i + 1,
 			Page:        page,
 			Frames:      append([]int{}, frames...),
@@ -49,12 +49,13 @@ func Fifo(prs []int, framesLength int) []pageStep {
 			faultsCount++
 
 			// frames is full
-			if !(len(frames) < framesLength) {
+			if len(frames) >= framesLength {
 				firstIn := queue[0] // oldest page
 
 				for position, val := range frames {
 					if val == firstIn {
 						frames[position] = page
+						break
 					}
 				}
 
@@ -73,6 +74,146 @@ func Fifo(prs []int, framesLength int) []pageStep {
 			copy(currStep.Frames, frames)              // copies the actual values from frames into the new slice
 		}
 
+		result = append(result, currStep)
+	}
+
+	return result
+}
+
+// comments are inside the function
+func Lru(prs []int, framesLength int) []PageStep {
+	// usageOrder tracks the usage count of pages existing in the frames
+	// 0 is the least recent usage, higher index have recent usage
+	var result []PageStep
+	var frames []int
+	var usageOrder []int
+	pageSet := map[int]bool{}
+	faultsCount := 0
+
+	for i, page := range prs {
+		currStep := PageStep{
+			Step: i + 1,
+			Page: page,
+		}
+
+		// Check if page is already in frames
+		if pageSet[page] {
+			currStep.PageFault = false
+
+			// delete the page from the usageOrder
+			for i, val := range usageOrder {
+				if val == page {
+					usageOrder = append(usageOrder[:i], usageOrder[i+1:]...)
+					break
+				}
+			}
+			// append it to end of the usageOrder because its most recently used
+			usageOrder = append(usageOrder, page)
+
+		} else {
+			currStep.PageFault = true
+			faultsCount++
+
+			// frames is full
+			if len(frames) >= framesLength {
+				leastRecentlyUsed := usageOrder[0]
+				usageOrder = usageOrder[1:]
+
+				for position, val := range frames {
+					if val == leastRecentlyUsed {
+						frames[position] = page
+					}
+				}
+
+				delete(pageSet, leastRecentlyUsed)
+			} else { // frames is not full
+				frames = append(frames, page)
+			}
+
+			// delete the least recently used page from the usageOrder
+			// append new page at the end of the usageOrder because its most recently used
+			usageOrder = append(usageOrder, page)
+			pageSet[page] = true
+		}
+
+		currStep.Frames = make([]int, len(frames)) // creates a empty slice with the same length as frames
+		copy(currStep.Frames, frames)              // copies the actual values from frames into the new slice
+
+		currStep.FaultsCount = faultsCount
+
+		result = append(result, currStep)
+	}
+
+	return result
+}
+
+func Opt(prs []int, framesLength int) []PageStep {
+	var result []PageStep
+	frames := make([]int, 0, framesLength)
+	faultsCount := 0
+
+	for step, page := range prs {
+		currStep := PageStep{
+			Step: step + 1,
+			Page: page,
+		}
+
+		// Check if page is already in frames
+		found := false
+		for _, p := range frames {
+			if p == page {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			currStep.PageFault = false
+		} else {
+			currStep.PageFault = true
+			faultsCount++
+
+			if len(frames) < framesLength {
+				// There's space, just add the page
+				frames = append(frames, page)
+			} else {
+				// Need to replace a page - find the optimal one to replace
+				indexToReplace := -1
+				farthest := -1
+
+				// For each page currently in frames, find when it will be used next
+				for i, p := range frames {
+					nextUse := -1
+					// Look ahead in the remaining page references
+					for j := step + 1; j < len(prs); j++ {
+						if prs[j] == p {
+							nextUse = j
+							break
+						}
+					}
+
+					// If this page isn't used again, it's the best to replace
+					if nextUse == -1 {
+						indexToReplace = i
+						break
+					}
+
+					// Otherwise, track the one with farthest next use
+					if nextUse > farthest {
+						farthest = nextUse
+						indexToReplace = i
+					}
+				}
+
+				// Replace the selected page
+				frames[indexToReplace] = page
+			}
+		}
+
+		// Record the current state
+		currStep.Frames = make([]int, len(frames))
+		copy(currStep.Frames, frames)
+		currStep.FaultsCount = faultsCount
 		result = append(result, currStep)
 	}
 
