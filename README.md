@@ -1,5 +1,16 @@
 # Page Replacement Algorithms
 
+## Screenshots
+
+![img](./screenshots/fifo-3-9.png)
+
+<div align="center">
+   <img src="./screenshots/lru-3-9.png" width="300px">
+   <img src="./screenshots/lru-18-16.png" width="300px">
+   <img src="./screenshots/opt-3-9.png" width="300px">
+   <img src="./screenshots/opt-18-9.png" width="300px">
+</div>
+
 ## 🧠 What Are They?
 
 Page replacement algorithms are strategies used by an operating system to manage memory — specifically virtual memory.
