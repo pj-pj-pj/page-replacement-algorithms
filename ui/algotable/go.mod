@@ -4,6 +4,7 @@ go 1.24.2
 
 require (
 	github.com/gdamore/tcell/v2 v2.8.1
+	github.com/pj-pj-pj/page-replacement-algorithms/algorithms v0.0.0-00010101000000-000000000000
 	github.com/rivo/tview v0.0.0-20250330220935-949945f8d922
 )
 
@@ -16,3 +17,5 @@ require (
 	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )
+
+replace github.com/pj-pj-pj/page-replacement-algorithms/algorithms => ../../algorithms
