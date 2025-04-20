@@ -14,21 +14,20 @@ import (
 
 	"github.com/pj-pj-pj/page-replacement-algorithms/assets"
 	"github.com/pj-pj-pj/page-replacement-algorithms/ui/algotable"
+
+	"github.com/pj-pj-pj/page-replacement-algorithms/algorithms"
 )
 
 // generates prs based on the length given
-// it says length but that is also range
 func generatePageRefString(length int) []int {
-	result := make([]int, length) // make is like array but it has dynamic size
+	result := make([]int, length) // make is like array but it has dynamic size, it makes "slice"
 
 	for i := 0; i < length; i++ {
-		result[i] = rand.Intn(length) // this thing returns integers from 0 to 9 (inclusive)
+		result[i] = rand.Intn(9) // this thing returns integers from 0 to 9 (inclusive)
 	}
 
 	return result
 }
-
-
 
 // green for hackerist vibes
 var primaryColor = tcell.ColorLimeGreen
@@ -97,20 +96,20 @@ var frames = tview.NewList().
 	// options of prs ranges for users to choose from
 var pageRefString *tview.List = tview.NewList().
 	ShowSecondaryText(false).
-	AddItem("0 - 9 (Default)", "", 0, func() { redrawPRS(0, 9) }).
-	AddItem("0 - 16", "", 0, func() {  redrawPRS(9, 16) }).
-	AddItem("0 - 20", "", 0, func() {  redrawPRS(1, 20) })
+	AddItem("9 pages (Default)", "", 0, func() { redrawPRS(0, 9) }).
+	AddItem("16 pages", "", 0, func() {  redrawPRS(9, 16) }).
+	AddItem("20 pages", "", 0, func() {  redrawPRS(1, 20) })
 
 // set up list's title and borders
 // somehow i cant do it when i initialize them so here it is
 func SetUpLists() {
 	frames.SetTitle(" Number of Frames ").SetBorder(true)
-	pageRefString.SetTitle(" Page Reference String (PRS) Range ").SetBorder(true)
+	pageRefString.SetTitle(" Length of Page Reference String (0–9) ").SetBorder(true)
 	algoType.SetTitle(" Algorithms ").SetBorder(true)
 
 	// out of place buut it needs to be setup along with the lists
 	// this sets up the table
-	algotable.PopulateTable(9, prs, selectedFrames)
+	algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
 }
 
 // these functions update ui
@@ -121,6 +120,15 @@ func redrawAlgoType(imgNumber int, algo string) {
 
 	selectedAlgo = algo
 	selectedAlgoDisplay.SetText("Algorithm: \t" + selectedAlgo)
+
+	switch selectedAlgo {
+	case "First-In, First-Out (FIFO)" :
+		algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
+	case "Least Recently Used (LRU)" :
+		algotable.PopulateTable(prs, selectedFrames, algorithms.Lru(prs, selectedFrames))
+	case "Optimal Algorithm (OPT)" :
+		algotable.PopulateTable(prs, selectedFrames, algorithms.Opt(prs, selectedFrames))
+}
 }
 
 func redrawFrames(imgNumber int, frames int) {
@@ -129,7 +137,14 @@ func redrawFrames(imgNumber int, frames int) {
 	selectedFrames = frames
 	selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
 
-	algotable.PopulateTable(selectedRange, prs, selectedFrames)
+	switch selectedAlgo {
+	case "First-In, First-Out (FIFO)" :
+		algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
+	case "Least Recently Used (LRU)" :
+		algotable.PopulateTable(prs, selectedFrames, algorithms.Lru(prs, selectedFrames))
+	case "Optimal Algorithm (OPT)" :
+		algotable.PopulateTable(prs, selectedFrames, algorithms.Opt(prs, selectedFrames))
+}
 }
 
 func redrawPRS(imgNumber int, prsRange int) {
@@ -141,7 +156,14 @@ func redrawPRS(imgNumber int, prsRange int) {
 	prs = generatePageRefString(selectedRange)
 	generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
 
-	algotable.PopulateTable(selectedRange, prs, selectedFrames)
+	switch selectedAlgo {
+		case "First-In, First-Out (FIFO)" :
+			algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
+		case "Least Recently Used (LRU)" :
+			algotable.PopulateTable(prs, selectedFrames, algorithms.Lru(prs, selectedFrames))
+		case "Optimal Algorithm (OPT)" :
+			algotable.PopulateTable(prs, selectedFrames, algorithms.Opt(prs, selectedFrames))
+	}
 }
 
 // we put lists on an array of type boxes
@@ -161,7 +183,7 @@ var MenuGrid = tview.NewGrid().
 	AddItem(frames, 3, 1, 1, 1, 0, 0, true).
 	AddItem(NewMainText(""), 4, 1, 1, 1, 0, 0, true).
 	AddItem(pageRefString, 5, 1, 1, 1, 0, 0, true).
-	AddItem(NewText("\n[!] Navigation:\n\tArrow keys [↑, ↓] to change option,\n\t[Tab] to switch lists,\n\t[Enter] key to select option\n"), 6, 1, 1, 1, 0, 0, true)
+	AddItem(NewText("\n[!] Navigation: Use Mouse Keys or\n\tArrow keys [↑, ↓] to change option,\n\t[Tab] to switch lists,\n\t[Enter] key to select option\n"), 6, 1, 1, 1, 0, 0, true)
 
 // --------------------------- menu grid and lists (ends here)
 
@@ -170,18 +192,19 @@ var MenuGrid = tview.NewGrid().
 
 // --------------------------- algorithm panel starts here
 
-var tableInfo = NewText("\n☆☆☆ Page Faults: 6 ☆☆☆\n\n\n\n[!]\tWhen selected PRS Range is 0-19 or 0-20, use [Mouse Scroll] or Arrow keys [↑, ↓] to move the table when some cells become hidden\n\nShift focus on the table using [Right Mouse] key and press [Enter] to select table cells")
+var tableInfo1 = tview.NewTextView().SetText("[!]\tIf PRS Range is 0-16 or 0-20, use [Mouse Scroll] or Arrow keys [↑, ↓] to move the table when some rows become hidden").SetTextColor(tcell.ColorRed)
 
 var AlgoGrid = tview.NewGrid().
 	SetBorders(false).
-	SetColumns(2, 25, 0, 0, 0).
-	SetRows(1, 1, 1, 1, 2, 1, 0).
-	AddItem(NewText(""), 0, 1, 1, 5, 0, 0, true).
+	SetColumns(2, 6, 0, 0, 0).
+	SetRows(1, 1, 1, 1, 2, 2, 1, 0, 3).
+	AddItem(NewText(""), 0, 1, 1, 4, 0, 0, true).
 	AddItem(selectedAlgoDisplay, 1, 1, 1, 4, 0, 0, true).
 	AddItem(selectedFramesDisplay, 2, 1, 1, 4, 0, 0, true).
 	AddItem(selectedRangeDisplay, 3, 1, 1, 4, 0, 0, true).
-	AddItem(generatedPageReferenceString, 4, 1, 1, 4, 0, 0, true).
-	AddItem(tableInfo, 5, 1, 2, 1, 0, 0, true).
-	AddItem(algotable.Table, 5, 2, 2, 4, 0, 0, true)
+	AddItem(generatedPageReferenceString, 4, 1, 1, 5, 0, 0, true).
+	AddItem(algotable.Table, 6, 2, 3, 5, 0, 0, true).
+	AddItem(tableInfo1, 5, 2, 1, 3, 0, 0, true).
+	AddItem(algotable.FaultsTable, 1, 6, 5, 2, 0, 0, true)
 
 // --------------------------- algorithm panel ends here
