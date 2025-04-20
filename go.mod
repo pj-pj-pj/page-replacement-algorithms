@@ -28,3 +28,5 @@ replace github.com/pj-pj-pj/page-replacement-algorithms/assets => ./assets
 replace github.com/pj-pj-pj/page-replacement-algorithms/ui => ./ui
 
 replace github.com/pj-pj-pj/page-replacement-algorithms/ui/algotable => ./ui/algotable
+
+replace github.com/pj-pj-pj/page-replacement-algorithms/algorithms => ./algorithms
