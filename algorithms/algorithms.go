@@ -8,6 +8,8 @@ type PageStep struct {
 	FaultsCount int
 }
 
+// comments are inside the functions
+
 func Fifo(prs []int, framesLength int) []PageStep {
 	// result stores the whole process
 	// frames represent the memory, this changes every step and stored in the result per PageStep
@@ -80,7 +82,6 @@ func Fifo(prs []int, framesLength int) []PageStep {
 	return result
 }
 
-// comments are inside the function
 func Lru(prs []int, framesLength int) []PageStep {
 	// usageOrder tracks the usage count of pages existing in the frames
 	// 0 is the least recent usage, higher index have recent usage
@@ -116,9 +117,13 @@ func Lru(prs []int, framesLength int) []PageStep {
 
 			// frames is full
 			if len(frames) >= framesLength {
+				// save the first element in usage order to the leastrecentlyused variable
 				leastRecentlyUsed := usageOrder[0]
+				// remove the first element of usageOrder
 				usageOrder = usageOrder[1:]
 
+				// find the identical page with the one stored in leastrecently used
+				// and replace with new page
 				for position, val := range frames {
 					if val == leastRecentlyUsed {
 						frames[position] = page
@@ -147,6 +152,9 @@ func Lru(prs []int, framesLength int) []PageStep {
 	return result
 }
 
+// this algoithm was implemented relying heavily on this variable: nextUse
+// it holds the information of a page if it'll never be used again (means it can be replaced)
+// or if the page has future use or if the use is very far off in the future
 func Opt(prs []int, framesLength int) []PageStep {
 	var result []PageStep
 	frames := make([]int, 0, framesLength)
@@ -158,7 +166,8 @@ func Opt(prs []int, framesLength int) []PageStep {
 			Page: page,
 		}
 
-		// Check if page is already in frames
+		// use different technique to find if page already exists
+		// for the sake of trying a new idea
 		found := false
 		for _, p := range frames {
 			if p == page {
@@ -174,7 +183,7 @@ func Opt(prs []int, framesLength int) []PageStep {
 			faultsCount++
 
 			if len(frames) < framesLength {
-				// There's space, just add the page
+				// There's space, just add the page, nothing much happens
 				frames = append(frames, page)
 			} else {
 				// Need to replace a page - find the optimal one to replace
