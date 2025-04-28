@@ -2,7 +2,6 @@ package algotable
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -10,12 +9,15 @@ import (
 	"github.com/pj-pj-pj/page-replacement-algorithms/algorithms"
 )
 
-// table to show the process of the selected algorithms
+// tables to show the process of the algorithms
+var TableStringsFifo = tview.NewTable()
+var TableFramesFifo = tview.NewTable().SetBorders(true)
 
-var Table = tview.NewTable().SetBorders(true)
-var tableHeaders = strings.Split("Step_Page_Frames Content_Page Fault?_Faults Count", "_")
+var TableStringsLru = tview.NewTable()
+var TableFramesLru = tview.NewTable().SetBorders(true)
 
-var FaultsTable = tview.NewTable().SetBorders(true)
+var TableStringsOpt = tview.NewTable()
+var TableFramesOpt = tview.NewTable().SetBorders(true)
 
 // format frames to use square brackets like this: [ ][ ]
 // and have different colors as well for the replaced frame
