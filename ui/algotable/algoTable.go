@@ -98,20 +98,35 @@ func PopulateTable(prs []int, frames int, result []algorithms.PageStep) {
 		}
 	}
 
-	// steps --- starts from 0
-	for steps := range rows {
-		Table.SetCell(steps +1, 0,
-			tview.NewTableCell(fmt.Sprintf("%d", steps)).
-				SetTextColor(tcell.ColorWhite).
-				SetAlign(tview.AlignCenter))
-	}
 
-	// page column
-	for i, page := range prs {
-		Table.SetCell(i +2, 1,
-			tview.NewTableCell(fmt.Sprintf("%d", page)).
-				SetTextColor(tcell.ColorOrange).
-				SetAlign(tview.AlignCenter))
+
+	// lru table
+	for c, val := range prs {
+    TableStringsLru.SetCell(0, c,
+        tview.NewTableCell(fmt.Sprintf("  %d", val)).
+            SetAlign(tview.AlignCenter))}
+
+	for i, val := range lruResult {
+		prevFaultsCount := 0
+		if i > 0 {
+				prevFaultsCount = lruResult[i-1].FaultsCount
+		}
+
+		for j, framesVal := range val.Frames {
+			if val.FaultsCount == prevFaultsCount {
+				TableFramesLru.SetCell(j, i,
+					tview.NewTableCell(fmt.Sprintf(" [darkslategray]%d ", framesVal)).
+							SetAlign(tview.AlignCenter))
+			} else if val.Page == framesVal && val.PageFault {
+				TableFramesLru.SetCell(j, i,
+						tview.NewTableCell(fmt.Sprintf(" [greenyellow]%d ", framesVal)).
+								SetAlign(tview.AlignCenter))
+			} else {
+				TableFramesLru.SetCell(j, i,
+						tview.NewTableCell(fmt.Sprintf(" %d ", framesVal)).
+								SetAlign(tview.AlignCenter))
+			}
+		}
 	}
 
 	// put empty frames at step 0
