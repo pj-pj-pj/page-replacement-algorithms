@@ -172,24 +172,21 @@ func PopulateTable(prs []int, frames int, result []algorithms.PageStep) {
 		TableFramesFifo.SetSelectable(false, false)
 	})
 
-	for g, currentStep := range result {
-		Table.SetCell(g +2, 4,
-			tview.NewTableCell(fmt.Sprintf("%v", currentStep.FaultsCount)).
-				SetTextColor(tcell.ColorWhite).
-				SetAlign(tview.AlignCenter))
-	}
-
-	// added cool navigation stuff i found on the internet
-	Table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+	TableFramesLru.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEnter {
-			Table.SetSelectable(true, true)
+			TableFramesLru.SetSelectable(true, true)
 		}
 	}).SetSelectedFunc(func(row int, column int) {
-		Table.GetCell(row, column).SetTextColor(tcell.ColorRed)
-		Table.SetSelectable(false, false)
+		TableFramesLru.GetCell(row, column).SetTextColor(tcell.ColorRed)
+		TableFramesLru.SetSelectable(false, false)
+	})
+
+	TableFramesOpt.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEnter {
+			TableFramesOpt.SetSelectable(true, true)
+		}
+	}).SetSelectedFunc(func(row int, column int) {
+		TableFramesOpt.GetCell(row, column).SetTextColor(tcell.ColorRed)
+		TableFramesOpt.SetSelectable(false, false)
 	})
 }
-
-
-	
-
