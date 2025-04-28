@@ -129,33 +129,48 @@ func PopulateTable(prs []int, frames int, result []algorithms.PageStep) {
 		}
 	}
 
-	// put empty frames at step 0
-	Table.SetCell(1, 2,
-		tview.NewTableCell((strings.Repeat("[gray][ ]", frames))).
-			SetTextColor(tcell.ColorWhite).
-			SetAlign(tview.AlignCenter))
 
 	
-	for f, currentStep := range result {
-		Table.SetCell(f +2, 2,
-			tview.NewTableCell(FormatFrames(currentStep.Frames, frames, currentStep.Page, currentStep.PageFault)).
-				SetTextColor(tcell.ColorWhite).
-				SetAlign(tview.AlignCenter))
-	}
 
-	for u, currentStep := range result {
-		if result[u].PageFault {
-			Table.SetCell(u +2, 3,
-				tview.NewTableCell(fmt.Sprintf("[mediumspringgreen]%v", currentStep.PageFault)).
-					SetTextColor(tcell.ColorWhite).
-					SetAlign(tview.AlignCenter))
-		} else {
-			Table.SetCell(u +2, 3,
-				tview.NewTableCell(fmt.Sprintf("%v", currentStep.PageFault)).
-					SetTextColor(tcell.ColorWhite).
-					SetAlign(tview.AlignCenter))
+	// opt table
+	for c, val := range prs {
+    TableStringsOpt.SetCell(0, c,
+        tview.NewTableCell(fmt.Sprintf("  %d", val)).
+            SetAlign(tview.AlignCenter))}
+
+	for i, val := range optResult {
+		prevFaultsCount := 0
+		if i > 0 {
+				prevFaultsCount = optResult[i-1].FaultsCount
+		}
+
+		for j, framesVal := range val.Frames {
+			if val.FaultsCount == prevFaultsCount {
+				TableFramesOpt.SetCell(j, i,
+					tview.NewTableCell(fmt.Sprintf(" [darkslategray]%d ", framesVal)).
+							SetAlign(tview.AlignCenter))
+			} else if val.Page == framesVal && val.PageFault {
+				TableFramesOpt.SetCell(j, i,
+						tview.NewTableCell(fmt.Sprintf(" [dodgerblue]%d ", framesVal)).
+								SetAlign(tview.AlignCenter))
+			} else {
+				TableFramesOpt.SetCell(j, i,
+						tview.NewTableCell(fmt.Sprintf(" %d ", framesVal)).
+								SetAlign(tview.AlignCenter))
+			}
 		}
 	}
+		
+	
+	// cool navigation stuff i found on the internet
+	TableFramesFifo.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEnter {
+			TableFramesFifo.SetSelectable(true, true)
+		}
+	}).SetSelectedFunc(func(row int, column int) {
+		TableFramesFifo.GetCell(row, column).SetTextColor(tcell.ColorRed)
+		TableFramesFifo.SetSelectable(false, false)
+	})
 
 	for g, currentStep := range result {
 		Table.SetCell(g +2, 4,
