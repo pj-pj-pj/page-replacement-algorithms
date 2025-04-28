@@ -19,42 +19,41 @@ var TableFramesLru = tview.NewTable().SetBorders(true)
 var TableStringsOpt = tview.NewTable()
 var TableFramesOpt = tview.NewTable().SetBorders(true)
 
-// format frames to use square brackets like this: [ ][ ]
-// and have different colors as well for the replaced frame
-func FormatFrames(frames []int, framesLength int, currentPage int, isPageFault bool) string {
-	result := ""
-	for i := 0; i < framesLength; i++ {
-		if i < len(frames) {
-			if frames[i] == currentPage && isPageFault {
-				result += fmt.Sprintf("[mediumspringgreen][%d]", frames[i])
-			} else {
-				result += fmt.Sprintf("[white][%d]", frames[i])
-			}
-		} else {
-			result += "[gray][ ]"
-		}
-	}
-	return strings.TrimSpace(result)
-}
+
+var AlgoFaults = tview.NewTable()
+
+
+var FifoFaultsText = tview.NewTextView().SetText("")
+var LruFaultsText = tview.NewTextView().SetText("")
+var OptFaultsText = tview.NewTextView().SetText("")
+
+
 
 // this function puts the contents inside the table
-func PopulateTable(prs []int, frames int, result []algorithms.PageStep) {
-	var rows = len(prs) + 1 // number of rows depends on the range selected + 1, because step 0 exists
-	
-	// clear the table every time frames and prs range changes to
-	// remove previous data 
-	Table.Clear()
-	FaultsTable.Clear()
+func PopulateTable(prs []int, frames int) { 
+	fifoResult, FifoFaults := algorithms.Fifo(prs, frames)
+	lruResult, LruFaults := algorithms.Lru(prs, frames)
+	optResult, OptFaults := algorithms.Opt(prs, frames)
 
-	// ----- faults table starts here
 
-	FaultsTable.SetCell(0, 0,
-			tview.NewTableCell(" Total Page Faults ").
+	FifoFaultsText.SetText(fmt.Sprintf("「 First-In, First-Out Page Faults: %d 」", FifoFaults))
+	LruFaultsText.SetText(fmt.Sprintf("「 Least Recently Used Page Faults: %d 」", LruFaults))
+	OptFaultsText.SetText(fmt.Sprintf("「 Optimal Page Faults: %d 」", OptFaults))
+
+	AlgoFaults.SetCell(0, 0,
+		tview.NewTableCell("  [limegreen]「 Fault Statistics:  | ").
+				SetAlign(tview.AlignCenter))
+
+	AlgoFaults.SetCell(0, 1,
+			tview.NewTableCell(fmt.Sprintf("[darkorange]FIFO: %d  [limegreen]| ", FifoFaults)).
 					SetAlign(tview.AlignCenter))
 
-	FaultsTable.SetCell(0, 1,
-		tview.NewTableCell(fmt.Sprintf(" %d ", result[len(result) - 1].FaultsCount)).
-				SetTextColor(tcell.ColorLimeGreen).
+	AlgoFaults.SetCell(0, 2,
+		tview.NewTableCell(fmt.Sprintf(" [greenyellow]LRU: %d  [limegreen]| ", LruFaults)).
+				SetAlign(tview.AlignCenter))
+
+	AlgoFaults.SetCell(0, 3,
+		tview.NewTableCell(fmt.Sprintf(" [dodgerblue]OPT: %d  [limegreen]」", OptFaults)).
 				SetAlign(tview.AlignCenter))
 
 
