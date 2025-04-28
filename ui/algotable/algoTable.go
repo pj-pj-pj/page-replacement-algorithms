@@ -57,16 +57,45 @@ func PopulateTable(prs []int, frames int, result []algorithms.PageStep) {
 				SetTextColor(tcell.ColorLimeGreen).
 				SetAlign(tview.AlignCenter))
 
-	// faults table ends here ----------
 
-	// ---- algorithm table starts here
+	// clear the table every time frames and prs range changes to
+	// remove previous data 
+	TableStringsFifo.Clear()
+	TableFramesFifo.Clear()
+	TableStringsLru.Clear()
+	TableFramesLru.Clear()
+	TableStringsOpt.Clear()
+	TableFramesOpt.Clear()
 
-	// table headers
-	for c, header := range tableHeaders {
-    Table.SetCell(0, c,
-        tview.NewTableCell(header).
-            SetTextColor(tcell.ColorOrange).
-            SetAlign(tview.AlignCenter))
+
+	// fifo table
+	for c, val := range prs {
+    TableStringsFifo.SetCell(0, c,
+        tview.NewTableCell(fmt.Sprintf("  %d", val)).
+            SetAlign(tview.AlignCenter))}
+
+	for i, val := range fifoResult {
+		prevFaultsCount := 0
+		if i > 0 {
+				prevFaultsCount = fifoResult[i-1].FaultsCount
+		}
+
+		// If current faultsCount did not increase, skip filling this step
+		for j, framesVal := range val.Frames {
+			if val.FaultsCount == prevFaultsCount {
+				TableFramesFifo.SetCell(j, i,
+					tview.NewTableCell(fmt.Sprintf(" [darkslategray]%d ", framesVal)).
+							SetAlign(tview.AlignCenter))
+			} else if val.Page == framesVal && val.PageFault {
+				TableFramesFifo.SetCell(j, i,
+						tview.NewTableCell(fmt.Sprintf(" [darkorange]%d ", framesVal)).
+								SetAlign(tview.AlignCenter))
+			} else {
+				TableFramesFifo.SetCell(j, i,
+						tview.NewTableCell(fmt.Sprintf(" %d ", framesVal)).
+								SetAlign(tview.AlignCenter))
+			}
+		}
 	}
 
 	// steps --- starts from 0
