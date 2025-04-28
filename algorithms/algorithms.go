@@ -10,7 +10,7 @@ type PageStep struct {
 
 // comments are inside the functions
 
-func Fifo(prs []int, framesLength int) []PageStep {
+func Fifo(prs []int, framesLength int) ([]PageStep, int) {
 	// result stores the whole process
 	// frames represent the memory, this changes every step and stored in the result per PageStep
 	// queue is for tracking the  "firstin" page, its elements shift left to replace the first element with the next one
@@ -79,10 +79,10 @@ func Fifo(prs []int, framesLength int) []PageStep {
 		result = append(result, currStep)
 	}
 
-	return result
+	return result, faultsCount
 }
 
-func Lru(prs []int, framesLength int) []PageStep {
+func Lru(prs []int, framesLength int) ([]PageStep, int) {
 	// usageOrder tracks the usage count of pages existing in the frames
 	// 0 is the least recent usage, higher index have recent usage
 	var result []PageStep
@@ -149,13 +149,13 @@ func Lru(prs []int, framesLength int) []PageStep {
 		result = append(result, currStep)
 	}
 
-	return result
+	return result, faultsCount
 }
 
 // this algoithm was implemented relying heavily on this variable: nextUse
 // it holds the information of a page if it'll never be used again (means it can be replaced)
 // or if the page has future use or if the use is very far off in the future
-func Opt(prs []int, framesLength int) []PageStep {
+func Opt(prs []int, framesLength int) ([]PageStep, int) {
 	var result []PageStep
 	frames := make([]int, 0, framesLength)
 	faultsCount := 0
@@ -226,5 +226,5 @@ func Opt(prs []int, framesLength int) []PageStep {
 		result = append(result, currStep)
 	}
 
-	return result
+	return result, faultsCount
 }
