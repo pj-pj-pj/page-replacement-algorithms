@@ -32,10 +32,22 @@ func generatePageRefString(length int) []int {
 // green for hackerist vibes
 var primaryColor = tcell.ColorLimeGreen
 
-// insert Image for hacker vibes
-var Image = tview.NewImage().SetImage(photo) 
-var b, _ = base64.StdEncoding.DecodeString(assets.Hackerist) 
-var photo, _ = jpeg.Decode(bytes.NewReader(b))
+var a, _ = base64.StdEncoding.DecodeString(assets.Juice)
+var b, _ = base64.StdEncoding.DecodeString(assets.Comp)
+var c, _ = base64.StdEncoding.DecodeString(assets.Moonlight)
+var d, _ = base64.StdEncoding.DecodeString(assets.Coffee)
+var e, _ = base64.StdEncoding.DecodeString(assets.Banana)
+
+var juicebox, _ = jpeg.Decode(bytes.NewReader(a))
+var computer, _ = gif.Decode(bytes.NewReader(b))
+var moon, _ = gif.Decode(bytes.NewReader(c))
+var coffee, _ = gif.Decode(bytes.NewReader(d))
+var banana, _ = gif.Decode(bytes.NewReader(e))
+
+var imgList = []image.Image{juicebox, computer, moon, coffee, banana}
+
+var Image = tview.NewImage().SetImage(computer).SetColors(256)
+
 
 
 
