@@ -3,8 +3,6 @@ package main
 import (
 	// these two packages provide stuff to create
 	// rich interactive terminal program for go lang woooo
-	"fmt"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
@@ -12,6 +10,7 @@ import (
 	// i put them in a module to reduce clutter here
 	// but this module contains the function for generating the page reference string
 	"github.com/pj-pj-pj/page-replacement-algorithms/ui"
+
 	"github.com/pj-pj-pj/page-replacement-algorithms/ui/algotable"
 )
 
