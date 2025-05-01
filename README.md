@@ -2,13 +2,22 @@
 
 ## Screenshots
 
-![img](./screenshots/fifo-3-9.png)
+![img](./screenshots/v1.1.0/algos.gif)
 
 <div align="center">
-   <img src="./screenshots/lru-3-9.png" width="300px">
-   <img src="./screenshots/lru-18-16.png" width="300px">
-   <img src="./screenshots/opt-3-9.png" width="300px">
-   <img src="./screenshots/opt-18-9.png" width="300px">
+   <img src="./screenshots/v1.1.0/default-9p-3f.png" width="300px">
+   <img src="./screenshots/v1.1.0/39p-3f.png" width="300px">
+   <img src="./screenshots/v1.1.0/14p-4f.png" width="300px">
+   <img src="./screenshots/v1.1.0/39p-5f.png" width="300px">
+</div>
+
+<div align="center">
+   <p>&nbsp;</p><p>&nbsp;</p>
+   <p>(v1.0.0 👇)</p>
+   <img src="./screenshots/v1.0.0/fifo-3-9.png" width="200px">
+   <img src="./screenshots/v1.0.0/lru-3-9.png" width="200px">
+   <img src="./screenshots/v1.0.0/opt-3-9.png" width="200px">
+   <p>&nbsp;</p>
 </div>
 
 ## 🧠 What Are They?
