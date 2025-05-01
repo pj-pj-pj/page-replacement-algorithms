@@ -70,19 +70,16 @@ var NewText = func(text string) *tview.TextView {
 
 // ----- algo values that menu needs to access so i need to initialize them here at the top
 
-var selectedAlgo = "First-In, First-Out (FIFO)"
-var selectedAlgoDisplay = NewText("Algorithm: \t" + selectedAlgo)
-
 var selectedFrames = 3
-var selectedFramesDisplay = NewText(fmt.Sprintf("Frames: \t%d", selectedFrames))
 
 var selectedRange = 9
-var selectedRangeDisplay = NewText(fmt.Sprintf("PRS Range: \t0 - %d", selectedRange))
 
 var prs = generatePageRefString(9)
-var generatedPageReferenceString = NewText(fmt.Sprint("Generated String: \t", prs))
+var generatedPageReferenceString = NewText(fmt.Sprint("Generated Pages: \n", prs))
 
 // ----- algo values end here
+
+
 
 
 // --------------------------- menu grid and lists ui stuff (starts here)
@@ -90,27 +87,27 @@ var generatedPageReferenceString = NewText(fmt.Sprint("Generated String: \t", pr
 // this is title text
 var menu = NewMainText("\nMenu")
 
-// this will appear on menu and users can select which page-replacement-algo to use
-var algoType = tview.NewList().
-	ShowSecondaryText(false).
-	AddItem("First-In, First-Out (FIFO)", "", 0, func() { redrawAlgoType(2, "First-In, First-Out (FIFO)") }).
-	AddItem("Least Recently Used (LRU)", "", 0, func() { redrawAlgoType(8, "Least Recently Used (LRU)") }).
-	AddItem("Optimal Algorithm (OPT)", "", 0, func() { redrawAlgoType(256, "Optimal Algorithm (OPT)") })
-
+// this will appear on menu and users can select which to use
 // options of number of frames for users to choose from
 var frames = tview.NewList().
 	ShowSecondaryText(false).
-	AddItem("3 (Default)", "", 0, func() { redrawFrames(4, 3) }).
-	AddItem("9", "", 0, func() { redrawFrames(0, 9) }).
-	AddItem("15", "", 0, func() { redrawFrames(256, 15) }).
-	AddItem("18", "", 0, func() {  redrawFrames(1, 18) })
+	AddItem("3 frames (Default)", "", 0, func() { redrawFrames(3) }).
+	AddItem("1 frame", "", 0, func() { redrawFrames(1) }).
+	AddItem("2 frames", "", 0, func() { redrawFrames(2) }).
+	AddItem("4 frames", "", 0, func() {  redrawFrames(4) }).
+	AddItem("5 frames", "", 0, func() {  redrawFrames(5) })
 
 	// options of prs ranges for users to choose from
 var pageRefString *tview.List = tview.NewList().
 	ShowSecondaryText(false).
-	AddItem("9 pages (Default)", "", 0, func() { redrawPRS(0, 9) }).
-	AddItem("16 pages", "", 0, func() {  redrawPRS(9, 16) }).
-	AddItem("20 pages", "", 0, func() {  redrawPRS(1, 20) })
+	AddItem("9 pages (Default)", "", 0, func() { redrawPRS(9) }).
+	AddItem("14 pages", "", 0, func() {  redrawPRS(19) }).
+	AddItem("19 pages", "", 0, func() {  redrawPRS(19) }).
+	AddItem("28 pages", "", 0, func() {  redrawPRS(30) }).
+	AddItem("39 pages", "", 0, func() {  redrawPRS(39) })
+
+
+
 
 // set up list's title and borders
 // somehow i cant do it when i initialize them so here it is
@@ -124,65 +121,34 @@ func SetUpLists() {
 	algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
 }
 
+
 // these functions update ui
 // i put here the repetitive functions that is used
 // whenever a selection is made from the list because they are now very long and just repetitive
 func redrawAlgoType(imgNumber int, algo string) {
 	Image.SetColors(imgNumber)
 
-	selectedAlgo = algo
-	selectedAlgoDisplay.SetText("Algorithm: \t" + selectedAlgo)
+	prs = generatePageRefString(selectedRange)
+	generatedPageReferenceString.SetText(fmt.Sprint("Generated Pages: \n", prs))
 
-	switch selectedAlgo {
-	case "First-In, First-Out (FIFO)" :
-		algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
-	case "Least Recently Used (LRU)" :
-		algotable.PopulateTable(prs, selectedFrames, algorithms.Lru(prs, selectedFrames))
-	case "Optimal Algorithm (OPT)" :
-		algotable.PopulateTable(prs, selectedFrames, algorithms.Opt(prs, selectedFrames))
-}
+	algotable.PopulateTable(prs, selectedFrames)
 }
 
 func redrawFrames(imgNumber int, frames int) {
 	Image.SetColors(imgNumber)
 		
 	selectedFrames = frames
-	selectedFramesDisplay.SetText(fmt.Sprintf("Frames: \t%d", selectedFrames))
 
-	switch selectedAlgo {
-	case "First-In, First-Out (FIFO)" :
-		algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
-	case "Least Recently Used (LRU)" :
-		algotable.PopulateTable(prs, selectedFrames, algorithms.Lru(prs, selectedFrames))
-	case "Optimal Algorithm (OPT)" :
-		algotable.PopulateTable(prs, selectedFrames, algorithms.Opt(prs, selectedFrames))
-}
+	algotable.PopulateTable(prs, selectedFrames)
 }
 
-func redrawPRS(imgNumber int, prsRange int) {
-	Image.SetColors(imgNumber)
-		
-	selectedRange = prsRange
-	selectedRangeDisplay.SetText(fmt.Sprintf("PRS Range: \t0 - %d", selectedRange))
 
-	prs = generatePageRefString(selectedRange)
-	generatedPageReferenceString.SetText(fmt.Sprint("Generated String: \t", prs))
-
-	switch selectedAlgo {
-		case "First-In, First-Out (FIFO)" :
-			algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
-		case "Least Recently Used (LRU)" :
-			algotable.PopulateTable(prs, selectedFrames, algorithms.Lru(prs, selectedFrames))
-		case "Optimal Algorithm (OPT)" :
-			algotable.PopulateTable(prs, selectedFrames, algorithms.Opt(prs, selectedFrames))
-	}
-}
 
 // we put lists on an array of type boxes
 // this is just to put in a for loop that can be seen on main
 // the loop puts keyboard navigation on the list
 // i just put it here to lessen more code on main as much as possible
-var Selections = []*tview.Box{algoType.Box, frames.Box, pageRefString.Box}
+var Selections = []*tview.Box{pageRefString.Box, frames.Box}
 
 // grid that holds the lists of options together
 var MenuGrid = tview.NewGrid().
