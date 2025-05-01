@@ -25,9 +25,9 @@ func main() {
 		SetRows(1, 0, 1).
 		SetColumns(40, 0, 0, 66).SetBorders(true).
 		AddItem(ui.NewMainText("╰☆☆ Ｐａｇｅ Ｒｅｐｌａｃｅｍｅｎｔ Ａｌｇｏｒｉｔｈｍｓ ☆☆╮"), 0, 0, 1, 3, 0, 0, false). // stars for extravagance
+		AddItem(algotable.AlgoFaults, 0, 3, 1, 1, 0, 0, false).
 		AddItem(ui.NewMainText("--- please fullscreen for better experience ---"), 2, 0, 1, 2, 0, 0, false).
 		AddItem(ui.NewMainText("╰☆☆ Ｐａｇｅ Ｒｅｐｌａｃｅｍｅｎｔ Ａｌｇｏｒｉｔｈｍｓ ☆☆╮"), 2, 2, 1, 2, 0, 0, false)
-		// AddItem(algotable.AlgoFaults, 0, 3, 1, 1, 0, 0, false).
 
 	// func (g *Grid) AddItem(p Primitive, row, column, rowSpan, colSpan, minGridHeight, minGridWidth int, focus bool) *Grid 
 	// ----> for guide to know how to layout items
