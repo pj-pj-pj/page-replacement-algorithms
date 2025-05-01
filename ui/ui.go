@@ -154,14 +154,15 @@ var Selections = []*tview.Box{pageRefString.Box, frames.Box}
 var MenuGrid = tview.NewGrid().
 	SetBorders(false).
 	SetColumns(2, 0, 2).
-	SetRows(3, 0, 1, 0, 1, 0, 6).
+	SetRows(3, 7, 4, 1, 7, 1, 6, 0, 1).
 	AddItem(menu, 0, 1, 1, 1, 0, 0, true).
-	AddItem(algoType, 1, 1, 1, 1, 0, 0, true).
-	AddItem(NewMainText(""), 2, 1, 1, 1, 0, 0, true).
-	AddItem(frames, 3, 1, 1, 1, 0, 0, true).
-	AddItem(NewMainText(""), 4, 1, 1, 1, 0, 0, true).
-	AddItem(pageRefString, 5, 1, 1, 1, 0, 0, true).
-	AddItem(NewText("\n[!] Navigation: Use Mouse Keys or\n\tArrow keys [↑, ↓] to change option,\n\t[Tab] to switch lists,\n\t[Enter] key to select option\n"), 6, 1, 1, 1, 0, 0, true)
+	AddItem(pageRefString, 1, 1, 1, 1, 0, 0, true).
+	AddItem(generatedPageReferenceString, 2, 1, 1, 1, 0, 0, true).
+	AddItem(NewMainText(""), 3, 1, 1, 1, 0, 0, true).
+	AddItem(frames, 4, 1, 1, 1, 0, 0, true).
+	AddItem(NewMainText(""), 5, 1, 1, 1, 0, 0, true).
+	AddItem(NewText("[!] Navigation: Use Mouse Keys or Arrow keys [↑, ↓] to change option, [Tab] to switch lists, and [Enter] key to select option\n").SetTextColor(tcell.ColorRed), 6, 1, 1, 1, 0, 0, true).
+	AddItem(Image, 7, 1, 1, 1, 0, 0, true)
 
 // --------------------------- menu grid and lists (ends here)
 
@@ -170,19 +171,20 @@ var MenuGrid = tview.NewGrid().
 
 // --------------------------- algorithm panel starts here
 
-var tableInfo1 = tview.NewTextView().SetText("[!]\tIf PRS Range is 0-16 or 0-20, use [Mouse Scroll] or Arrow keys [↑, ↓] to move the table when some rows become hidden").SetTextColor(tcell.ColorRed)
 
 var AlgoGrid = tview.NewGrid().
 	SetBorders(false).
-	SetColumns(2, 6, 0, 0, 0).
-	SetRows(1, 1, 1, 1, 2, 2, 1, 0, 3).
-	AddItem(NewText(""), 0, 1, 1, 4, 0, 0, true).
-	AddItem(selectedAlgoDisplay, 1, 1, 1, 4, 0, 0, true).
-	AddItem(selectedFramesDisplay, 2, 1, 1, 4, 0, 0, true).
-	AddItem(selectedRangeDisplay, 3, 1, 1, 4, 0, 0, true).
-	AddItem(generatedPageReferenceString, 4, 1, 1, 5, 0, 0, true).
-	AddItem(algotable.Table, 6, 2, 3, 5, 0, 0, true).
-	AddItem(tableInfo1, 5, 2, 1, 3, 0, 0, true).
-	AddItem(algotable.FaultsTable, 1, 6, 5, 2, 0, 0, true)
+	SetColumns(2, 2, 0).
+	SetRows(1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0).
+	AddItem(algotable.FifoFaultsText.SetTextColor(tcell.ColorDarkOrange), 1, 2, 1, 1, 0, 0, true).
+	AddItem(algotable.TableStringsFifo, 3, 1, 1, 2, 0, 0, true).
+	AddItem(algotable.TableFramesFifo, 4, 1, 1, 2, 0, 0, true).
+	AddItem(algotable.LruFaultsText.SetTextColor(tcell.ColorGreenYellow), 6, 2, 1, 1, 0, 0, true).
+	AddItem(algotable.TableStringsLru, 7, 1, 1, 2, 0, 0, true).
+	AddItem(algotable.TableFramesLru, 8, 1, 1, 2, 0, 0, true).
+	AddItem(algotable.OptFaultsText.SetTextColor(tcell.ColorDodgerBlue), 9, 2, 1, 1, 0, 0, true).
+	AddItem(algotable.TableStringsOpt, 11, 1, 1, 2, 0, 0, true).
+	AddItem(algotable.TableFramesOpt, 12, 1, 1, 2, 0, 0, true)
+
 
 // --------------------------- algorithm panel ends here
