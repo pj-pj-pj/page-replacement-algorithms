@@ -57,7 +57,7 @@ var Image = tview.NewImage().SetImage(computer).SetColors(256)
 var NewMainText = func(text string) tview.Primitive {
 	return tview.NewTextView().
 		SetTextAlign(tview.AlignCenter).
-		SetText(text).SetTextColor(tcell.Color153) // blue
+		SetText(text).SetTextColor(primaryColor)
 }
 
 var NewText = func(text string) *tview.TextView {
