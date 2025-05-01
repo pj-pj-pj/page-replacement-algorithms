@@ -22,11 +22,12 @@ func main() {
 
 	// this is the main grid of the program
 	grid := tview.NewGrid().
-		SetRows(3, 0, 1).
-		SetColumns(40, 0, 0, 0).SetBorders(true).
-		AddItem(ui.NewText("･*\t･ﾟ･･ﾟ\t･ﾟ*･ﾟ:･ﾟ･ﾟ･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ*･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧･ﾟ*･ﾟ･ﾟ\n:･ﾟ✧ ･･･ﾟ✧\t･ﾟ*･ﾟ  :･ﾟ✧ ✧\t･ﾟ*･ﾟ  :･ﾟ✧･ﾟ･ﾟ*･ﾟ*･ﾟpage･ﾟ*✧replacement･ﾟ･ﾟalgorithms･ﾟ*✧･ﾟ:･ﾟ\n･✧\t･ﾟ･ﾟ*✧･ﾟ:\t･✧\t･ﾟ*･ﾟ:✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ･ﾟ･ﾟ✧\t･ﾟ*\t･ﾟ*･ﾟ:･ﾟ･ﾟ:･ﾟ✧\t･ﾟ*･ﾟ:･ﾟ･ﾟ･ﾟ:･ﾟ\t･ﾟ･ﾟ"), 0, 0, 1, 4, 0, 0, false). // stars for extravagance
-		AddItem(ui.NewMainText(fmt.Sprint("✿paula-joyce-ucol\t･ﾟ:･ﾟ✧･ﾟ*･ﾟ\t\tbscs-3b✿")), 2, 2, 1, 2, 0, 0, false).
-		AddItem(ui.NewMainText("--- please fullscreen for better experience ---"), 2, 0, 1, 2, 0, 0, false)
+		SetRows(1, 0, 1).
+		SetColumns(40, 0, 0, 66).SetBorders(true).
+		AddItem(ui.NewMainText("╰☆☆ Ｐａｇｅ Ｒｅｐｌａｃｅｍｅｎｔ Ａｌｇｏｒｉｔｈｍｓ ☆☆╮"), 0, 0, 1, 3, 0, 0, false). // stars for extravagance
+		AddItem(ui.NewMainText("--- please fullscreen for better experience ---"), 2, 0, 1, 2, 0, 0, false).
+		AddItem(ui.NewMainText("╰☆☆ Ｐａｇｅ Ｒｅｐｌａｃｅｍｅｎｔ Ａｌｇｏｒｉｔｈｍｓ ☆☆╮"), 2, 2, 1, 2, 0, 0, false)
+		// AddItem(algotable.AlgoFaults, 0, 3, 1, 1, 0, 0, false).
 
 	// func (g *Grid) AddItem(p Primitive, row, column, rowSpan, colSpan, minGridHeight, minGridWidth int, focus bool) *Grid 
 	// ----> for guide to know how to layout items
