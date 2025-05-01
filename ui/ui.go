@@ -113,20 +113,21 @@ var pageRefString *tview.List = tview.NewList().
 // somehow i cant do it when i initialize them so here it is
 func SetUpLists() {
 	frames.SetTitle(" Number of Frames ").SetBorder(true)
-	pageRefString.SetTitle(" Length of Page Reference String (0–9) ").SetBorder(true)
-	algoType.SetTitle(" Algorithms ").SetBorder(true)
+	pageRefString.SetTitle(" Generate Pages (0–9) ").SetBorder(true)
+	// algoType.SetTitle(" Algorithms ").SetBorder(true)
 
 	// out of place buut it needs to be setup along with the lists
 	// this sets up the table
-	algotable.PopulateTable(prs, selectedFrames, algorithms.Fifo(prs, selectedFrames))
+	algotable.PopulateTable(prs, selectedFrames)
 }
 
 
 // these functions update ui
 // i put here the repetitive functions that is used
 // whenever a selection is made from the list because they are now very long and just repetitive
-func redrawAlgoType(imgNumber int, algo string) {
-	Image.SetColors(imgNumber)
+func redrawPRS( prsRange int) {
+	Image.SetImage(imgList[rand.Intn(4)])
+	selectedRange = prsRange
 
 	prs = generatePageRefString(selectedRange)
 	generatedPageReferenceString.SetText(fmt.Sprint("Generated Pages: \n", prs))
@@ -134,9 +135,8 @@ func redrawAlgoType(imgNumber int, algo string) {
 	algotable.PopulateTable(prs, selectedFrames)
 }
 
-func redrawFrames(imgNumber int, frames int) {
-	Image.SetColors(imgNumber)
-		
+func redrawFrames(frames int) {
+	Image.SetImage(imgList[rand.Intn(4)])
 	selectedFrames = frames
 
 	algotable.PopulateTable(prs, selectedFrames)
