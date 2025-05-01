@@ -33,14 +33,9 @@ func main() {
 	// ----> for guide to know how to layout items
 
 	// Layout for screens narrower than 150 cells.
-	grid.AddItem(ui.Image, 0, 0, 0, 0, 0, 0, false).
-		AddItem(ui.MenuGrid, 1, 0, 1, 1, 0, 0, false).
-		AddItem(ui.AlgoGrid, 1, 1, 1, 3, 0, 0, false)
-
-	// Layout for screens wider than 150 cells.
-	grid.AddItem(ui.Image, 1, 0, 1, 1, 0, 150, false).
-		AddItem(ui.MenuGrid, 1, 1, 1, 1, 0, 150, false).
-		AddItem(ui.AlgoGrid, 1, 2, 1, 2, 0, 150, false)
+	grid. // image removed for v1.1
+		AddItem(ui.MenuGrid, 1, 0, 1, 1, 0, 0, true).
+		AddItem(ui.AlgoGrid, 1, 1, 1, 3, 0, 0, true)
 
 	// this is for setting up the titles and borders of the list
 	// idk why but if I dont set them up separately and
@@ -64,7 +59,7 @@ func main() {
 				}
 				return event
 			}).
-			SetBorderColor(tcell.Color153)
+			SetBorderColor(tcell.ColorCornflowerBlue)
 			// SetBackgroundColor(tcell.Color153)
 		})(i)
 	}
