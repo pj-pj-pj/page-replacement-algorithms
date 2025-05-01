@@ -2,7 +2,9 @@ package ui
 
 import (
 	"fmt"
+	"image"
 
+	"Image/gif"
 	"Image/jpeg"
 	"bytes"
 	"encoding/base64"
@@ -14,8 +16,6 @@ import (
 
 	"github.com/pj-pj-pj/page-replacement-algorithms/assets"
 	"github.com/pj-pj-pj/page-replacement-algorithms/ui/algotable"
-
-	"github.com/pj-pj-pj/page-replacement-algorithms/algorithms"
 )
 
 // generates prs based on the length given
