@@ -20,13 +20,6 @@ func main() {
 	// tview is a library for creating rich interactive terminal programs which is what im trying to create here
 	app := tview.NewApplication()
 
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if  event.Rune() == 'f' {
-			app.SetRoot(algotable.Table, true)
-		}
-		return event
-	})
-
 	// this is the main grid of the program
 	grid := tview.NewGrid().
 		SetRows(3, 0, 1).
