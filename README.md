@@ -1,7 +1,7 @@
 # Page Replacement Algorithms
 
 - Download: [v1.1.0 Release](https://github.com/pj-pj-pj/page-replacement-algorithms/releases/tag/v1.1.0)
-- Documentation: [View PDF File](https://github.com/pj-pj-pj/page-replacement-algorithms/blob/main/documentation/Ucol-Case_Study-OS-Documentation.pdf)
+- Documentation: [View PDF File](https://github.com/pj-pj-pj/page-replacement-algorithms/blob/main/documentation/Ucol-Case_Study-OS_Documentation.pdf)
 
 ## Screenshots
 
@@ -15,7 +15,7 @@
 </div>
 
 <div align="center">
-   <p>&nbsp;</p><p>&nbsp;</p>
+   <p>&nbsp;</p>
    <p>(v1.0.0 👇)</p>
    <img src="./screenshots/v1.0.0/fifo-3-9.png" width="200px">
    <img src="./screenshots/v1.0.0/lru-3-9.png" width="200px">
