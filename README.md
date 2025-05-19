@@ -1,5 +1,8 @@
 # Page Replacement Algorithms
 
+- Download: [v1.1.0 Release](https://github.com/pj-pj-pj/page-replacement-algorithms/releases/tag/v1.1.0)
+- Documentation: [View PDF File](https://github.com/pj-pj-pj/page-replacement-algorithms/blob/main/documentation/Ucol-Case_Study-OS-Documentation.pdf)
+
 ## Screenshots
 
 ![img](./screenshots/v1.1.0/algos.gif)
